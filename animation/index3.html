@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<style>
+		#top {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 50px;
+			width: 100%;
+			background-color: red;
+		}
+		
+		#bottom {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			height: 50px;
+			width: 100%;
+			background-color: #008200;
+		}
+		
+		#middle {
+			position: absolute;
+			left: 0;
+			top: 50px;
+			bottom: 50px;
+			width: 100%;
+		}
+		
+		#one {
+			width: 100px;
+			float: left;
+			height: 100%;
+			background-color: #0000cc;
+		}
+		
+		#four {
+			height: 100%;
+			width: 50px;
+			float: right;
+			background-color: yellow;
+		}
+		
+		#two {
+			height: 100%;
+			background-color: black;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="top"></div>
+	<div id="bottom"></div>
+	<div id="middle">
+		<div id="one"></div>
+		<div id="two">
+			<div id="three"></div>
+			<div id="four"></div>
+		</div>
+	</div>
+</body>
+</html>

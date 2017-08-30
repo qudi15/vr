@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="//cdn.bootcss.com/redux/3.6.0/redux.js"></script>
+    <script src="//unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+
+<body>
+    <script>
+        const { createStore } = Redux;
+
+        const counter = (state = 0, action) => {
+            switch (action.type) {
+                case 'INCREMENT':
+                    return state + 1;
+                case 'DECREMENT':
+                    return state - 1;
+                default:
+                    return state;
+            }
+        }
+
+        const store = createStore(counter);
+
+        store.subscribe(() => {
+            document.body.innerText = store.getState();
+        })
+
+        store.subscribe(() => {
+            console.log(store.getState());
+        })
+
+        document.addEventListener('click', e => {
+            store.dispatch({type: 'INCREMENT'});
+        })
+
+    </script>
+</body>
+
+</html>

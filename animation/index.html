@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title></title>
+  <style>
+  html,
+  body {
+    color: white;
+    height: 100%;
+  }
+  
+  body {
+    background-color: #000000;
+    margin: 0;
+    font-family: Helvetica, sans-serif;
+    overflow: hidden;
+  }
+  
+  input[type="text"] {
+    text-align: center;
+    width: 50px;
+    box-sizing: border-box;
+    outline: 0px;
+    color: white;
+    border: 1px solid white;
+    background: transparent;
+  }
+  
+  a {
+    color: #ffffff;
+    cursor: pointer;
+  }
+  
+  #info {
+    position: absolute;
+    width: 100%;
+    color: #ffffff;
+    padding: 5px;
+    font-family: Monospace;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+    z-index: 1;
+  }
+  
+  #menu {
+    z-index: 1;
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    font-family: verdana, Tahoma, Arial, Hei, "Microsoft Yahei", SimHei;
+  }
+  
+  #menu > div {
+    margin-bottom: 5px;
+  }
+  
+  .element {
+    transition: opacity 0.3s;
+    width: 120px;
+    height: 120px;
+    box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.5);
+    text-align: center;
+    cursor: default;
+    opacity: 0.7;
+  }
+  
+  .element img {
+    border-radius: 60px;
+    border: 1px solid rgba(127, 255, 255, 0.25);
+  }
+  
+  button {
+    color: white;
+    background: transparent;
+    outline: 1px solid white;
+    border: 0px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  button:active {
+    color: #000000;
+    background-color: rgba(0, 255, 255, 0.75);
+  }
+  
+  #app,
+  #container {
+    height: 100%;
+  }
+  
+  .scale2 {
+    transition: all 0.5s;
+    transform: scale(5) rotate(180deg) !important;
+  }
+  
+  #app {
+    display: flex;
+    position: relative;
+  }
+  
+  #app > div:first-child {
+    flex: 1;
+    position: relative;
+  }
+  
+  #app > div:last-child {
+    color: white;
+    flex: 0 0 300px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  #app > div:last-child > div {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  #app h2 {
+    text-align: center;
+  }
+  
+  .radio-con {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .qcontainer {
+    -webkit-perspective: 400;
+    -moz-perspective: 400;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .qcontainer .film {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    -webkit-transform-style: preserve-3d;
+    -webkit-transition: 1.5s;
+    -moz-transform-style: preserve-3d;
+    -moz-transition: 1.5s;
+  }
+  
+  .qcontainer:hover .film {
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    width: 70px;
+    height: 100px;
+  }
+  
+  .qcontainer .face {
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+  }
+  
+  .qcontainer .face h3 {
+    color: white;
+    text-align: center;
+  }
+  
+  .qcontainer .face img {
+    height: 100%;
+    width: 100%;
+  }
+  
+  .qcontainer .back {
+    padding: 10px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    background: -webkit-gradient(linear, left top, left bottom, from(#fdbb5a), to(#db5726));
+    background: -moz-linear-gradient(top, #fdbb5a, #db5726);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .qcontainer .foot {
+    text-align: center;
+    color: #fff;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    margin-left: -126px;
+    font-size: 12px;
+  }
+  
+  [class^="level"] > div {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  [class^="level"] > div > div {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .winners-con {
+    position: absolute;
+    width: 300px;
+    right: 0;
+  }
+  
+  .qcontainer .remove-btn {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAAAMgAAADIAGP6560AAAAHdElNRQfgAwkWDiBdflb8AAAD6ElEQVRYw73YXWjVZRwH8M/m1JnTmdt8WVPDIp0vuZSSZRZ604iW1oWJQqHOukgEJbAQSoKsrhakJAgGU0GoC7OpRdnLCt+IwLRZ6d1ym3PSdOKcmz5dbMeds53XWX2vzvP7/57v93e+z/P8/s85/MfIyiA32/DeT51u/5sCeaaa4SHTlMhC0ORPfzjrvKt3KzBTpQpzjEGXdh3INdpQtPvVQYeddmtwAmXWWqrYVT877jcXtGrHSEWKTVPuUWO1+sIOJzOwGhTZolFQb7N57ombM8Jsm5wSXLLVhEzoy9UJztngvpS541SpFxy1MF36JRp0qzEt7YKm2KZTk9WyUye/pFW7jXIzsjRHlYs6rE8lsUSrZssyOh8RVGrSoSpZSrkG7ZYNgjwi0azZokSPi9TptnFQ1UewSqeTSuI/3CKoydD7/shRLaiOtxJlGp2L2TnDzFWQkjJfmWFR40nOaPPkwMTtgg0xkbma7FeclL7Qbi0Wx8TWCHbLiU2c6YL6fseqwH7BgSQShfYIDpoYEx3rmDblsalvCDYPICh2IIlEQS/9wCVdJ3gvOpDne1fMi0OSWGKMXYLauDum1EW/RK/fw/52JEFLiy9RqCYhPUN9psOCvsBywbsJnR4o0WNObZJW+Lrg1b7hW4IVpJQo6q0+kfd9eMYt2yKDbHvd9BQpJFrNT5OeR1zxdeQdPsIPLpspOYrMN/yOOSUpsie7oM6IiECdv0yWGgX2plE9TNLQI5CTBm0EhT60wiFrNaY/qacpBblGpkG/0iGv6PKsvBTZWdE9Ods+N+O1pxhz+rxfo8tHKSTmaHOkrzO/I1ietPronTPdCcHH8pPMqHDLjr7hSsHbCZPHqOm3tDPUCXYmkdggeK1vONdVX0Y21QBz4vWcqb4SfNJ79PpjiH1uRF9jRvvJZbMTmhOvKZSoFXzar1X34AENzhgXHXpTsCkhffx939NAPo/TaSt0+yA2VOaSU7Ga8u1OcawiPWp8v/g4L7u/v2u7hH53mjItKU9tsQOuq5AGHnNJvSlRkWEWx3U4FuNVpDx2vdgq2JZR88gQExzVmfzqd7dYqMlFlYOen8bderUOTYOUWGSPx1PXsF6HZqsyXItsL2p009J0Uqs061RtUtr0473vmqvWG5rulz0pOGONsSlzR3nBMcFZz2dyLy9RrU1wzDqlCeoaYqrVvtOl3U4PxidKrJntCWtVytfiR8fVa3JZQJZ7TVRqvgVKXPeN7b7VnakA5HjUc55WKtdt11xzG1nyjJKt03mH1TrhRmKKdFwrMN0ss0y/819Fl3NOO+13LakmZ/JzafidgxSS1fw/4x/SVS+So1RsGgAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxNi0wOS0xN1QxNToyMjoxMCswODowMHkzuEwAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTYtMDMtMDlUMjI6MTQ6MzIrMDg6MDCSCwX9AAAATXRFWHRzb2Z0d2FyZQBJbWFnZU1hZ2ljayA3LjAuMS02IFExNiB4ODZfNjQgMjAxNi0wOS0xNyBodHRwOi8vd3d3LmltYWdlbWFnaWNrLm9yZ93ZpU4AAABjdEVYdHN2Zzpjb21tZW50ACBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE5LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIM5IkAsAAAAYdEVYdFRodW1iOjpEb2N1bWVudDo6UGFnZXMAMaf/uy8AAAAYdEVYdFRodW1iOjpJbWFnZTo6SGVpZ2h0ADkwMQaFyh4AAAAXdEVYdFRodW1iOjpJbWFnZTo6V2lkdGgAOTAxlXSaQwAAABl0RVh0VGh1bWI6Ok1pbWV0eXBlAGltYWdlL3BuZz+yVk4AAAAXdEVYdFRodW1iOjpNVGltZQAxNDU3NTMyODcys4bitAAAABJ0RVh0VGh1bWI6OlNpemUAMjAuOEtCOKlxvgAAAF90RVh0VGh1bWI6OlVSSQBmaWxlOi8vL2hvbWUvd3d3cm9vdC9zaXRlL3d3dy5lYXN5aWNvbi5uZXQvY2RuLWltZy5lYXN5aWNvbi5jbi9zcmMvMTE5OTkvMTE5OTkzMi5wbmdPeRiLAAAAAElFTkSuQmCC");
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 10px;
+    background-size: 20px;
+    right: 10px;
+  }
+  </style>
+</head>
+
+<body>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/three.min.js"></script>
+  <script src="js/tween.min.js"></script>
+  <script src="js/TrackballControls.js"></script>
+  <script src="//pvp.qq.com/act/a20161130ar/js/DeviceOrientationControls.js"></script>
+  <script src="js/css3drenderer.js"></script>
+  <script src="js/vue.min.js"></script>
+  <div id="app">
+    <div ref="container" id="container">
+      <div id="menu">
+        <div>
+          <!--<label for="number"></label>
+          <input type="text" id="number" v-model="number">-->
+        </div>
+        <!--<div class="radio-con">
+          <input type="radio" id="one" value="levelOneCon" v-model="levelSelected">
+          <label for="one">一等奖</label>
+          <input type="radio" id="two" value="levelTwoCon" v-model="levelSelected">
+          <label for="two">二等奖</label>
+          <input type="radio" id="three" value="levelThreeCon" v-model="levelSelected">
+          <label for="three">三等奖</label>
+          <input type="radio" id="four" value="levelFourthCon" v-model="levelSelected">
+          <label for="four">四等奖</label>
+        </div>-->
+        <!--<button @click="onStartBtnClick" id="start">{{ running ? 'Stop' : 'Start'}}</button>-->
+      </div>
+    </div>
+    <div ref="winners" class="winners-con">
+      <!--<div class="level1" v-bind:style="{ display: levelSelected == 'levelOneCon' ? 'flex':'none' }">
+        <h2>一等奖</h2>
+        <div>
+          <div ref="levelOneCon"></div>
+        </div>
+      </div>
+      <div class="level2" v-bind:style="{ display: levelSelected == 'levelTwoCon' ? 'flex':'none' }">
+        <h2>二等奖</h2>
+        <div>
+          <div ref="levelTwoCon"></div>
+        </div>
+      </div>
+      <div class="level3" v-bind:style="{ display: levelSelected == 'levelThreeCon' ? 'flex':'none' }">
+        <h2>三等奖</h2>
+        <div>
+          <div ref="levelThreeCon"></div>
+        </div>
+      </div>
+      <div class="level4" v-bind:style="{ display: levelSelected == 'levelFourthCon' ? 'flex':'none' }">
+        <h2>四等奖</h2>
+        <div>
+          <div ref="levelFourthCon"></div>
+        </div>
+      </div>-->
+    </div>
+  </div>
+  <script type="text/x-template" id="point">
+    <div class="element">
+      <div class="film">
+        <div class="face front">
+          <img ref="img" src="">
+        </div>
+        <div class="face back">
+          {{ name }}
+          <a class="remove-btn" @click="onRemoveBtnClick"></a>
+        </div>
+      </div>
+    </div>
+  </script>
+  <script type="text/javascript">
+  var usersList = [{
+    "id": 21265,
+    "uid": "208017672",
+    "building": "DL16",
+    "mobile-phone": "86-134-78688753",
+    "is-employee": true,
+    "bio": "Manager, Global Integration Solution",
+    "location": "Dalian, 21, CN",
+    "email": "dongjf@cn.ibm.com",
+    "name": "Jian Feng Dong",
+    "office-phone": "86-411-88151123",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Jian Feng Dong/China/IBM"
+  }, {
+    "id": 221945,
+    "uid": "221954672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "Manager, Digital Technology Delivery China",
+    "location": "Dalian, 21, CN",
+    "email": "hezhedl@cn.ibm.com",
+    "name": "Zhe He",
+    "office-phone": "86-134-78736227",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Zhe ZH He/China/IBM"
+  }, {
+    "id": 452385,
+    "uid": "210615672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "Manager - Global Integration Solutions",
+    "location": "Dalian, 21, CN",
+    "email": "houdd@cn.ibm.com",
+    "name": "Dong Dong Hou",
+    "office-phone": "86-0411-88151394",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Dong Dong Hou/China/IBM"
+  }, {
+    "uid": "201441672",
+    "building": "TD1",
+    "location": "Dalian, 21, CN",
+    "office-phone": "86-159-40900420",
+    "org-title": "IBM Global Markets, Marketing",
+    "id": 135698,
+    "mobile-phone": "86-159-40900420",
+    "bio": "Manager - China Digital Technology Delivery Team",
+    "is-employee": true,
+    "floor": "2F",
+    "email": "liyongdl@cn.ibm.com",
+    "name": "Yong Li",
+    "notes-id": "Yong I Li/China/IBM"
+  }, {
+    "id": 246943,
+    "uid": "05494A672",
+    "building": "TD1",
+    "mobile-phone": "86--1824114 9011",
+    "is-employee": true,
+    "bio": "Manager - Global Solutions Services - China",
+    "location": "Dalian, 21, CN",
+    "email": "apoorva.nadig@cn.ibm.com",
+    "name": "Apoorva Kumar Nadig",
+    "office-phone": "86-411-881 50592",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Apoorva Kumar Nadig/China/IBM"
+  }, {
+    "id": 268321,
+    "uid": "AVKJN4672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "dlcyi@cn.ibm.com",
+    "name": "Yi Cheng",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Yi EX Cheng/China/Contr/IBM"
+  }, {
+    "id": 279194,
+    "uid": "207616672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "Application Developer, Global Online Commerce WSE Enablement",
+    "location": "Dalian, 21, CN",
+    "email": "jinxiaoh@cn.ibm.com",
+    "name": "Xiao Hui Jin",
+    "office-phone": "86-0411-88077003",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Xiao Hui Jin/China/IBM"
+  }, {
+    "uid": "AVDXSC672",
+    "office": "S0302FC067",
+    "building": "DL16",
+    "location": "Dalian, 21, CN",
+    "office-phone": "86-411-88151122",
+    "org-title": "IBM Digital Business Group",
+    "id": 571618,
+    "bio": "Tools Developer",
+    "is-employee": true,
+    "floor": "2",
+    "email": "lzishuo@cn.ibm.com",
+    "name": "Zi Shuo Liao",
+    "notes-id": "Zi Shuo ZS Liao/China/Contr/IBM"
+  }, {
+    "id": 24799,
+    "uid": "AVKKSB672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "liuclcdl@cn.ibm.com",
+    "name": "Chang Liu",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Chang AA Liu/China/Contr/IBM"
+  }, {
+    "id": 499415,
+    "uid": "AVKJ65672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "ccliudl@cn.ibm.com",
+    "name": "Chun Chen Liu",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Chun Chen CC Liu/China/Contr/IBM"
+  }, {
+    "id": 318733,
+    "uid": "053946672",
+    "is-employee": true,
+    "location": "cn",
+    "email": "feilv@cn.ibm.com",
+    "name": "Fei Lv",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Fei Lv/China/IBM"
+  }, {
+    "id": 75789,
+    "uid": "073713672",
+    "building": "TD1",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "bailongl@cn.ibm.com",
+    "name": "Bai Long Lv",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Bai Long Lv/China/IBM"
+  }, {
+    "id": 446657,
+    "uid": "018305672",
+    "building": "TD1",
+    "mobile-phone": "86-139-4206-3149",
+    "is-employee": true,
+    "bio": "Application Developer,Global Online Commerce WSE Enablement",
+    "location": "Dalian, 21, CN",
+    "email": "wenlvdl@cn.ibm.com",
+    "name": "Wen Lv",
+    "office-phone": "411-8815-1885",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Wen DL Lv/China/IBM"
+  }, {
+    "id": 470471,
+    "uid": "AVKJN3672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "mxlmadl@cn.ibm.com",
+    "name": "Xiao Long Ma",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Xiao Long HM Ma/China/Contr/IBM"
+  }, {
+    "id": 67460,
+    "uid": "AVJM4V672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "Application Developer, Global Online Commerce WSE Enablement",
+    "location": "Dalian, 21, CN",
+    "email": "mmwam@cn.ibm.com",
+    "name": "Adams Mwambia Michael",
+    "office-phone": "86-188-4084-1072",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Michael AD Mwambia/China/Contr/IBM"
+  }, {
+    "id": 305814,
+    "uid": "085393672",
+    "is-employee": true,
+    "bio": "Application Developer",
+    "location": "DaLian, cn",
+    "email": "shenjx@cn.ibm.com",
+    "name": "Jia Xin Shen",
+    "office-phone": "86-158-4248-7382",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Jia Xin Shen/China/IBM"
+  }, {
+    "id": 210890,
+    "uid": "AVKUD8672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "slysundl@cn.ibm.com",
+    "name": "Ling Yu Sun",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Ling Yu BS Sun/China/Contr/IBM"
+  }, {
+    "id": 74544,
+    "uid": "04671A672",
+    "is-employee": true,
+    "bio": "Application Developer,  Global Online Commerce WSE Enablement",
+    "location": "cn",
+    "email": "pengsunp@cn.ibm.com",
+    "name": "Peng Sun",
+    "office-phone": "86-0411-88151122",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Peng AS Sun/China/IBM"
+  }, {
+    "uid": "222957672",
+    "office": "SO302FC083",
+    "building": "DL16",
+    "location": "Dalian, 21, CN",
+    "office-phone": "86-139-98589939",
+    "org-title": "IBM Digital Business Group",
+    "id": 554098,
+    "bio": "Application Developer, Global Online Commerce WSE Enablement",
+    "is-employee": true,
+    "floor": "2",
+    "email": "wchendl@cn.ibm.com",
+    "name": "Chen Wang",
+    "notes-id": "Chen R Wang/China/IBM"
+  }, {
+    "id": 499562,
+    "uid": "AVL2H0672",
+    "is-employee": true,
+    "location": "cn",
+    "email": "wcwchen@cn.ibm.com",
+    "name": "Chen Wang",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Chen CE Wang/China/Contr/IBM"
+  }, {
+    "id": 542522,
+    "uid": "AVC4PB672",
+    "is-employee": true,
+    "bio": "Application Developer, Global Online Commerce WSE Enablement",
+    "location": "Dalian, 21, CN",
+    "email": "dlwangy@cn.ibm.com",
+    "name": "Ying Wang",
+    "office-phone": "138-8947-2076",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Ying Z Wang/China/Contr/IBM"
+  }, {
+    "id": 9903,
+    "uid": "AVHYCK672",
+    "building": "SO3",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "wyydl@cn.ibm.com",
+    "name": "Yang Yang Wang",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Yang Yang HW Wang/China/Contr/IBM"
+  }, {
+    "uid": "222080672",
+    "office": "SO302FC069",
+    "building": "DL16",
+    "location": "Dalian, 21, CN",
+    "office-phone": "86-8815-1242",
+    "org-title": "IBM Digital Business Group",
+    "id": 193107,
+    "bio": "Application Developer, Global Online Commerce WSE Enablement",
+    "is-employee": true,
+    "floor": "2",
+    "email": "yangxmxm@cn.ibm.com",
+    "name": "Xiao Meng Yang",
+    "notes-id": "Xiao Meng XM Yang/China/IBM"
+  }, {
+    "id": 116489,
+    "uid": "030123672",
+    "building": "SO3",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "yuyjc@cn.ibm.com",
+    "name": "Jing Ci Yu",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Jing Ci AY Yu/China/IBM"
+  }, {
+    "id": 499470,
+    "uid": "AVKPV7672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "Application Developer",
+    "location": "Dalian, 21, CN",
+    "email": "dlzhaoyh@cn.ibm.com",
+    "name": "Ying Han Zhao",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Ying Han AZ Zhao/China/Contr/IBM"
+  }, {
+    "id": 297033,
+    "uid": "AVKVX8672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "dlzhaoxj@cn.ibm.com",
+    "name": "Xue Jing Zhao",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Xue Jing KZ Zhao/China/Contr/IBM"
+  }, {
+    "uid": "221734672",
+    "building": "DL16",
+    "location": "Dalian, 21, CN",
+    "office-phone": "86-411-3901-2425",
+    "org-title": "IBM Global Markets, Marketing",
+    "id": 250560,
+    "mobile-phone": "136-2428-0762",
+    "bio": "Development Lead - Digital Sales Technology Delivery Team",
+    "is-employee": true,
+    "floor": "6",
+    "email": "zhihengc@cn.ibm.com",
+    "name": "Zhi Heng Chi",
+    "notes-id": "Zhi Heng DL Chi/China/IBM"
+  }, {
+    "id": 373703,
+    "uid": "007724672",
+    "building": "TD1",
+    "is-employee": true,
+    "bio": "Technical Owner - Digital Technology Enablement",
+    "location": "Dalian, 21, CN",
+    "email": "gaurak@cn.ibm.com",
+    "name": "Anjini Kumar Gaur",
+    "office-phone": "86-182-4111-4853",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Anjini Kumar Gaur/China/IBM"
+  }, {
+    "id": 479652,
+    "uid": "094350672",
+    "is-employee": true,
+    "location": "cn",
+    "email": "jwchao@cn.ibm.com",
+    "name": "Wilson Jiang",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Wen Chao WC Jiang/China/IBM"
+  }, {
+    "id": 210529,
+    "uid": "AVJ3UB672",
+    "mobile-phone": "86-15898148815",
+    "is-employee": true,
+    "bio": "QA specialist",
+    "location": "cn",
+    "email": "lildm@cn.ibm.com",
+    "name": "De Mao Li",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "De Mao DL Li/China/Contr/IBM"
+  }, {
+    "id": 572074,
+    "uid": "AVKL94672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "ldlhui@cn.ibm.com",
+    "name": "Hui Li",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Hui CN Li/China/Contr/IBM"
+  }, {
+    "id": 124586,
+    "uid": "AVJS3B672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "liyuwei@cn.ibm.com",
+    "name": "Yu Wei Li",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Yu Wei QL Li/China/Contr/IBM"
+  }, {
+    "id": 67831,
+    "uid": "AVL6W2672",
+    "is-employee": true,
+    "location": "cn",
+    "email": "liyyydl@cn.ibm.com",
+    "name": "Yang Li",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Yang BQ Li/China/Contr/IBM"
+  }, {
+    "id": 418791,
+    "uid": "033891672",
+    "mobile-phone": "86-131-54115018",
+    "is-employee": true,
+    "bio": "Technical Lead - Digital Sales Technology Delivery Team",
+    "location": "cn",
+    "email": "dlliuc@cn.ibm.com",
+    "name": "Chao Liu",
+    "office-phone": "86-131-5411-5018",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Chao TL Liu/China/IBM"
+  }, {
+    "id": 533811,
+    "uid": "019918672",
+    "building": "SO3",
+    "is-employee": true,
+    "bio": "Application Developer",
+    "location": "Dalian, 21, CN",
+    "email": "sqliu@cn.ibm.com",
+    "name": "Sheng Qun Liu",
+    "office-phone": "86-159-4111-6613",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Sheng Qun CQ Liu/China/IBM"
+  }, {
+    "id": 38680,
+    "uid": "AVG7K2672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "liuhel@cn.ibm.com",
+    "name": "He Liu",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "He LH Liu/China/Contr/IBM"
+  }, {
+    "id": 557376,
+    "uid": "AVK2AV672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "mzcma@cn.ibm.com",
+    "name": "Zhan Chao Ma",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Zhan Chao PM Ma/China/Contr/IBM"
+  }, {
+    "id": 67247,
+    "uid": "AVEKTK672",
+    "building": "DL16",
+    "mobile-phone": "86-159-42679057",
+    "is-employee": true,
+    "bio": "Web Developer",
+    "location": "Dalian, 21, CN",
+    "email": "sbaonan@cn.ibm.com",
+    "name": "Bao Nan Shan",
+    "office-phone": "86-0411-86219330",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Bao Nan BN Shan/China/Contr/IBM"
+  }, {
+    "id": 394622,
+    "uid": "221157672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "I/T Specialist",
+    "location": "Dalian, 21, CN",
+    "email": "sunjdl@cn.ibm.com",
+    "name": "Jing Sun",
+    "office-phone": "86-130-79833989",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Jing DL Sun/China/IBM"
+  }, {
+    "id": 398096,
+    "uid": "AVKPUU672",
+    "building": "DL16",
+    "mobile-phone": "86-18910196214",
+    "is-employee": true,
+    "bio": "Android Developer",
+    "location": "Dalian, 21, CN",
+    "email": "dlwjix@cn.ibm.com",
+    "name": "Ji Xiang Wang",
+    "office-phone": "86-1891019 x6214",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Ji Xiang OW Wang/China/Contr/IBM"
+  }, {
+    "id": 73487,
+    "uid": "027871672",
+    "building": "TD2",
+    "is-employee": true,
+    "bio": "IOS developer",
+    "location": "Dalian, 21, CN",
+    "email": "qianruw@cn.ibm.com",
+    "name": "Qian Ru Wang",
+    "office-phone": "86-186-40988288",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Qian Ru QR Wang/China/IBM"
+  }, {
+    "id": 409114,
+    "uid": "222106672",
+    "building": "TD1",
+    "floor": "2",
+    "is-employee": true,
+    "bio": "I/T Specialist",
+    "location": "Dalian, 21, CN",
+    "email": "wxyu@cn.ibm.com",
+    "name": "Xiao Yu Wang",
+    "office-phone": "86-158-0426-6793",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Xiao Yu W Wang/China/IBM"
+  }, {
+    "id": 53058,
+    "uid": "AVJW4F672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "Application Developer : Mobile",
+    "location": "Dalian, 21, CN",
+    "email": "xjrxue@cn.ibm.com",
+    "name": "Jun Rong Xue",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Jun Rong WX Xue/China/Contr/IBM"
+  }, {
+    "id": 1441,
+    "uid": "023942672",
+    "building": "TD1",
+    "is-employee": true,
+    "bio": "Technical Lead, Digital Techonology Enablement, Digital Sales",
+    "location": "Dalian, 21, CN",
+    "email": "zyunfeng@cn.ibm.com",
+    "name": "Yun Feng Zhang",
+    "office-phone": "123-151-40321618 x1618",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Yun Feng Y Zhang/China/IBM"
+  }, {
+    "id": 239790,
+    "uid": "AVL55V672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "zznanzz@cn.ibm.com",
+    "name": "Zhi Nan Zhang",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Zhi Nan ZZ Zhang/China/Contr/IBM"
+  }, {
+    "id": 476881,
+    "uid": "037227672",
+    "building": "TD2",
+    "is-employee": true,
+    "bio": "QA specialist",
+    "location": "Dalian, 21, CN",
+    "email": "yrzhao@cn.ibm.com",
+    "name": "Yan Ru Zhao",
+    "office-phone": "86-1516-4018-337",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Yan Ru YR Zhao/China/IBM"
+  }, {
+    "id": 176743,
+    "uid": "088792672",
+    "is-employee": true,
+    "bio": "ETL Developer",
+    "location": "cn",
+    "email": "llzhen@cn.ibm.com",
+    "name": "Li Li Zhen",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Li Li AL Zhen/China/IBM"
+  }, {
+    "id": 571591,
+    "uid": "AV9FSB672",
+    "is-employee": true,
+    "bio": "DSC Life Cycle Support",
+    "location": "Dalian, 21, CN",
+    "email": "jpinhe@cn.ibm.com",
+    "name": "Pin He Jiang",
+    "office-phone": "86-123-456-555",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Pin He Jiang/China/Contr/IBM"
+  }, {
+    "id": 470021,
+    "uid": "AVCABX672",
+    "is-employee": true,
+    "bio": "DSC Support-WebSphere Administrator",
+    "location": "Dalian, 21, CN",
+    "email": "liubingd@cn.ibm.com",
+    "name": "Bing Liu",
+    "office-phone": "852-1234-5678 x33",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Bing FL Liu/China/Contr/IBM"
+  }, {
+    "id": 205236,
+    "uid": "085646672",
+    "building": "SO4",
+    "is-employee": true,
+    "bio": "WSE Level 1 Support - Global Integration Solutions",
+    "location": "Dalian, 21, CN",
+    "email": "cuijina@cn.ibm.com",
+    "name": "Ji Na Cui",
+    "office-phone": "86-411-88150550",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Ji Na Cui/China/IBM"
+  }, {
+    "id": 121365,
+    "uid": "222711672",
+    "building": "TD1",
+    "floor": "2",
+    "is-employee": true,
+    "bio": "Application tester",
+    "location": "Dalian, 21, CN",
+    "email": "jnhan@cn.ibm.com",
+    "name": "Jian Nan Han",
+    "office-phone": "86-411-881-51427",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Jian Nan H Han/China/IBM"
+  }, {
+    "id": 181801,
+    "uid": "AVGJTL672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "Software test engineer",
+    "location": "Dalian, 21, CN",
+    "email": "hjhu@cn.ibm.com",
+    "name": "Jing Hu",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Jing HH Hu/China/Contr/IBM"
+  }, {
+    "id": 30737,
+    "uid": "030119672",
+    "building": "SO3",
+    "is-employee": true,
+    "bio": "Application Tester, Global Online Commerce WSE Enablement IBM Digital Business Group",
+    "location": "Dalian, 21, CN",
+    "email": "lxlleng@cn.ibm.com",
+    "name": "Xue Lian Leng",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Xue Lian KL Leng/China/IBM"
+  }, {
+    "id": 101861,
+    "uid": "024465672",
+    "building": "TD1",
+    "is-employee": true,
+    "bio": "WSE-W Level-1 Support",
+    "location": "Dalian, 21, CN",
+    "email": "lilingk@cn.ibm.com",
+    "name": "Ling Kun Li",
+    "office-phone": "411-8815-0715",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Ling Kun LK Li/China/IBM"
+  }, {
+    "id": 513877,
+    "uid": "AVKE37672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "songdlj@cn.ibm.com",
+    "name": "Jia Song",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Jia BL Song/China/Contr/IBM"
+  }, {
+    "id": 360947,
+    "uid": "033894672",
+    "is-employee": true,
+    "location": "cn",
+    "email": "suzhen@cn.ibm.com",
+    "name": "Zhen Su",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Zhen DL Su/China/IBM"
+  }, {
+    "id": 67348,
+    "uid": "AVHKE7672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "WSE Level 1 Support - Global Integration Solutions",
+    "location": "Dalian, 21, CN",
+    "email": "jingwvm@cn.ibm.com",
+    "name": "Jing Wang",
+    "office-phone": "86-411-88150550",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Jing VM Wang/China/Contr/IBM"
+  }, {
+    "uid": "222110672",
+    "office": "SO302FC078",
+    "building": "DL16",
+    "location": "Dalian, 21, CN",
+    "office-phone": "150-4057-4536",
+    "org-title": "IBM Digital Business Group",
+    "id": 437831,
+    "bio": "Application Tester, Global Online Commerce WSE Enablement",
+    "is-employee": true,
+    "floor": "2",
+    "email": "dlwhuiy@cn.ibm.com",
+    "name": "Hui Ying Wang",
+    "notes-id": "Hui Ying V Wang/China/IBM"
+  }, {
+    "id": 191031,
+    "uid": "088611672",
+    "building": "TD1",
+    "is-employee": true,
+    "bio": "WSE Level 1 Support - Global Integration Solutions",
+    "location": "Dalian, 21, CN",
+    "email": "zhenhuaw@cn.ibm.com",
+    "name": "Zhen Hua Wang",
+    "office-phone": "86-411-88150550",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Zhen Hua Wang/China/IBM"
+  }, {
+    "id": 221838,
+    "uid": "210088672",
+    "building": "DL16",
+    "mobile-phone": "86-411-81114296",
+    "is-employee": true,
+    "bio": "I/T Specialist",
+    "location": "Dalian, 21, CN",
+    "email": "xiayunp@cn.ibm.com",
+    "name": "Yun Ping Xia",
+    "office-phone": "86-411-88151391 x1391",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Yun Ping Xia/China/IBM"
+  }, {
+    "uid": "222112672",
+    "office": "SO302FC077",
+    "building": "DL16",
+    "location": "Dalian, 21, CN",
+    "office-phone": "86-0411-88151641",
+    "org-title": "IBM Digital Business Group",
+    "id": 539531,
+    "bio": "Application Tester, Global Online Commerce WSE Enablement",
+    "is-employee": true,
+    "floor": "6",
+    "email": "xieyxyx@cn.ibm.com",
+    "name": "Yu Xin Xie",
+    "notes-id": "Yu Xin YX Xie/China/IBM"
+  }, {
+    "id": 339816,
+    "uid": "AVJ64A672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "xxjxu@cn.ibm.com",
+    "name": "Xiang Jie Xu",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Xiang Jie XX Xu/China/Contr/IBM"
+  }, {
+    "id": 375006,
+    "uid": "027117672",
+    "building": "TD2",
+    "is-employee": true,
+    "bio": "Application Tester, Global Online Commerce WSE Enablement",
+    "location": "Dalian, 21, CN",
+    "email": "yxtyu@cn.ibm.com",
+    "name": "Xiao Tong Yu",
+    "office-phone": "86-411-8815-1938",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Xiao Tong XT Yu/China/IBM"
+  }, {
+    "id": 528165,
+    "uid": "AVJA12672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "yinzhdl@cn.ibm.com",
+    "name": "Ying Zhang",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Ying DM Zhang/China/Contr/IBM"
+  }, {
+    "id": 461969,
+    "uid": "03010E672",
+    "building": "SO3",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "zyandlzy@cn.ibm.com",
+    "name": "Yan Zhang",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Yan RR Zhang/China/IBM"
+  }, {
+    "uid": "221921672",
+    "office": "16B06FE003",
+    "building": "DL16",
+    "location": "Dalian, 21, CN",
+    "office-phone": "86-1",
+    "org-title": "IBM Digital Business Group",
+    "id": 351250,
+    "bio": "Application Developer, Global Online Commerce WSE Enablement",
+    "is-employee": true,
+    "floor": "6",
+    "email": "zhouydl@cn.ibm.com",
+    "name": "You Zhou",
+    "notes-id": "You DL Zhou/China/IBM"
+  }, {
+    "id": 221947,
+    "uid": "222089672",
+    "building": "TD1",
+    "mobile-phone": "86-159-40923352",
+    "is-employee": true,
+    "bio": "Application Developer - ISA",
+    "location": "Dalian, 21, CN",
+    "email": "cuizhecc@cn.ibm.com",
+    "name": "Zhe Cui",
+    "office-phone": "86-159-40923352",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Zhe CC Cui/China/IBM"
+  }, {
+    "id": 268074,
+    "uid": "AVJCHD672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "gaomn@cn.ibm.com",
+    "name": "Meng Nan Gao",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Meng Nan OG Gao/China/Contr/IBM"
+  }, {
+    "id": 81711,
+    "uid": "AVJME2672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "hxiandl@cn.ibm.com",
+    "name": "Xian Hu",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Xian IU Hu/China/Contr/IBM"
+  }, {
+    "id": 81470,
+    "uid": "AVBJ3K672",
+    "mobile-phone": "86-138-89551874",
+    "is-employee": true,
+    "bio": "Web Developer",
+    "location": "Dalian, 21, CN",
+    "email": "zonghuaj@cn.ibm.com",
+    "name": "Zong Hua Ji",
+    "office-phone": "86-138-89551874",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Zong Hua Ji/China/Contr/IBM"
+  }, {
+    "id": 499673,
+    "uid": "AVLBWW672",
+    "is-employee": true,
+    "location": "cn",
+    "email": "jlnjia@cn.ibm.com",
+    "name": "Ling Na Jia",
+    "office-phone": "86-18840868024",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Ling Na LN Jia/China/Contr/IBM"
+  }, {
+    "id": 434797,
+    "uid": "067043672",
+    "is-employee": true,
+    "location": "cn",
+    "email": "dljiangm@cn.ibm.com",
+    "name": "Ming Jiang",
+    "office-phone": "86-158-9819-7163",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Ming M Jiang/China/IBM"
+  }, {
+    "id": 248506,
+    "uid": "08879A672",
+    "is-employee": true,
+    "location": "cn",
+    "email": "liyanly@cn.ibm.com",
+    "name": "Yan Li",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Yan UW Li/China/IBM"
+  }, {
+    "id": 499190,
+    "uid": "AVJG0A672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "Web Developer",
+    "location": "Dalian, 21, CN",
+    "email": "liljwljw@cn.ibm.com",
+    "name": "Ji Wei Li",
+    "office-phone": "86-130-74131362",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Ji Wei QL Li/China/Contr/IBM"
+  }, {
+    "id": 231775,
+    "uid": "038972672",
+    "building": "TD1",
+    "is-employee": true,
+    "bio": "Technical lead - Digital Sales Technology, IBM Certified IT Specialist(L1)",
+    "location": "Dalian, 21, CN",
+    "email": "slili@cn.ibm.com",
+    "name": "Li Li",
+    "office-phone": "86-134-7872-7780 x0411",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Li VV Li/China/IBM"
+  }, {
+    "id": 539533,
+    "uid": "222365672",
+    "building": "TD1",
+    "floor": "1F",
+    "is-employee": true,
+    "bio": "Technical Lead - Digital Sales Technology",
+    "location": "Dalian, 21, CN",
+    "email": "issclike@cn.ibm.com",
+    "name": "Ke Li",
+    "office-phone": "86-159-98684286",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Ke AG Li/China/IBM"
+  }, {
+    "id": 204851,
+    "uid": "07739A672",
+    "is-employee": true,
+    "bio": "ETL Developer",
+    "location": "cn",
+    "email": "liuwxuan@cn.ibm.com",
+    "name": "Wen Xuan Liu",
+    "office-phone": "86--15940897097",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Wen Xuan Liu/China/IBM"
+  }, {
+    "id": 219729,
+    "uid": "088791672",
+    "is-employee": true,
+    "bio": "QA Specialist, Digital Sales Technology Team",
+    "location": "cn",
+    "email": "liujianb@cn.ibm.com",
+    "name": "Jian Bo Liu",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Jian Bo JB Liu/China/IBM"
+  }, {
+    "id": 484520,
+    "uid": "AVHHGE672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "dlldslou@cn.ibm.com",
+    "name": "Dao Sheng Lou",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Dao Sheng VL Lou/China/Contr/IBM"
+  }, {
+    "id": 146832,
+    "uid": "059792672",
+    "is-employee": true,
+    "bio": "Technical Lead-Digital Sales",
+    "location": "cn",
+    "email": "dlmiaozy@cn.ibm.com",
+    "name": "Zhi Yuan Miao",
+    "office-phone": "133-1411-3023",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Zhi Yuan YM Miao/China/IBM"
+  }, {
+    "id": 368672,
+    "uid": "AVG5PH672",
+    "building": "DL16",
+    "mobile-phone": "86-188-4085-8686",
+    "is-employee": true,
+    "bio": "Web Developer",
+    "location": "Dalian, 21, CN",
+    "email": "qiuzt@cn.ibm.com",
+    "name": "Zhan Tong Qiu",
+    "office-phone": "86-188-4085-8686",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Zhan Tong ZT Qiu/China/Contr/IBM"
+  }, {
+    "id": 253587,
+    "uid": "AVHSG6672",
+    "is-employee": true,
+    "bio": "Front End Engineer",
+    "location": "cn",
+    "email": "qdquqd@cn.ibm.com",
+    "name": "Di Qu",
+    "office-phone": "86-1365498-2933",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Di AL Qu/China/Contr/IBM"
+  }, {
+    "id": 203765,
+    "uid": "053045672",
+    "building": "TD1",
+    "is-employee": true,
+    "bio": "Technical Lead - Digital Sales Technology - ISA project",
+    "location": "Dalian, 21, CN",
+    "email": "hdshao@cn.ibm.com",
+    "name": "Hui De Shao",
+    "office-phone": "86-137-9512-8698",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Hui De HD Shao/China/IBM"
+  }, {
+    "id": 528493,
+    "uid": "AVKU5S672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "szhedl@cn.ibm.com",
+    "name": "Zhe Sun",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Zhe FI Sun/China/Contr/IBM"
+  }, {
+    "id": 572309,
+    "uid": "AVLCD1672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "Java develop",
+    "location": "Dalian, 21, CN",
+    "email": "skwangdl@cn.ibm.com",
+    "name": "Sheng Kai Wang",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Sheng Kai IW Wang/China/Contr/IBM"
+  }, {
+    "id": 534198,
+    "uid": "026015672",
+    "is-employee": true,
+    "location": "cn",
+    "email": "wanglq@cn.ibm.com",
+    "name": "Lian Qing Wang",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Lian Qing LQ Wang/China/IBM"
+  }, {
+    "id": 174029,
+    "uid": "033811672",
+    "building": "TD1",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "dmwang@cn.ibm.com",
+    "name": "Dong Mei Wang",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Dong Mei Wang/China/IBM"
+  }, {
+    "id": 67453,
+    "uid": "AVJK7K672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "ETL Developer",
+    "location": "Dalian, 21, CN",
+    "email": "wzwenwz@cn.ibm.com",
+    "name": "Zheng Wen",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Zheng KO Wen/China/Contr/IBM"
+  }, {
+    "id": 476292,
+    "uid": "027305672",
+    "building": "TD2",
+    "is-employee": true,
+    "bio": "QA Specialist - Digital Sales Enablement - Blue Direct",
+    "location": "Dalian, 21, CN",
+    "email": "wuyulun@cn.ibm.com",
+    "name": "Yu Lun Wu",
+    "office-phone": "86-135-0072-7231 x1234",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Yu Lun YL Wu/China/IBM"
+  }, {
+    "id": 145479,
+    "uid": "034162672",
+    "mobile-phone": "86-139-9861-2808",
+    "is-employee": true,
+    "bio": "Web Developer",
+    "location": "cn",
+    "email": "xinxinxu@cn.ibm.com",
+    "name": "Xin Xin Xu",
+    "office-phone": "86-139-9861-2808",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Xin Xin AC Xu/China/IBM"
+  }, {
+    "id": 153030,
+    "uid": "AVEU9X672",
+    "is-employee": true,
+    "bio": "Web Developer - Digital Sales Delivery - Proactive Alert",
+    "location": "cn",
+    "email": "dlyangk@cn.ibm.com",
+    "name": "Kai Yang",
+    "office-phone": "136-4491-1407",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Kai AC Yang/China/Contr/IBM"
+  }, {
+    "id": 513434,
+    "uid": "AV7YL8672",
+    "floor": "3",
+    "is-employee": true,
+    "bio": "Visual Design - China Digital Technology Delivery Team",
+    "location": "Dalian, 21, CN",
+    "email": "yinmx@cn.ibm.com",
+    "name": "Ming Xian Yin",
+    "office-phone": "86-135-559-82530",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Ming Xian Yin/China/Contr/IBM"
+  }, {
+    "id": 510440,
+    "uid": "213513672",
+    "building": "DL16",
+    "mobile-phone": "86-135-9135-0979",
+    "is-employee": true,
+    "bio": "Technical Lead - Digital Sales Technology, IBM Certified IT Specialist(L1)",
+    "location": "Dalian, 21, CN",
+    "email": "yinfz@cn.ibm.com",
+    "name": "Fu Zhen Yin",
+    "office-phone": "86-135-9135-0979",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Fu Zhen Yin/China/IBM"
+  }, {
+    "id": 124865,
+    "uid": "AVKVX5672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "Software Engineer",
+    "location": "Dalian, 21, CN",
+    "email": "dlyucq@cn.ibm.com",
+    "name": "Chao Qun Yu",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Chao Qun WY Yu/China/Contr/IBM"
+  }, {
+    "id": 9986,
+    "uid": "AVJNTA672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "IBM Digital Sales",
+    "location": "Dalian, 21, CN",
+    "email": "dlzzqing@cn.ibm.com",
+    "name": "Zhen Qing Zhang",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Zhen Qing QZ Zhang/China/Contr/IBM"
+  }, {
+    "id": 542644,
+    "uid": "AVH80K672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "zjunyou@cn.ibm.com",
+    "name": "Jun You Zhang",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Jun You IZ Zhang/China/Contr/IBM"
+  }, {
+    "uid": "222064672",
+    "building": "DL16",
+    "location": "Dalian, 21, CN",
+    "office-phone": "86-138-9860-9893",
+    "org-title": "IBM Global Markets, Marketing",
+    "id": 150126,
+    "mobile-phone": "86-138-9860-9893",
+    "bio": "QA Specialist - Digital Sales Enablement - ISMR Project",
+    "is-employee": true,
+    "floor": "3",
+    "email": "zhangpj@cn.ibm.com",
+    "name": "Pei Jun Zhang",
+    "notes-id": "Pei Jun Zhang/China/IBM"
+  }, {
+    "id": 210436,
+    "uid": "AVH020672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "zhaoyian@cn.ibm.com",
+    "name": "Yi An Zhao",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Yi An YA Zhao/China/Contr/IBM"
+  }, {
+    "id": 196250,
+    "uid": "AVJR4U672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "dlzpeng@cn.ibm.com",
+    "name": "Peng Zhao",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Peng DB Zhao/China/Contr/IBM"
+  }, {
+    "id": 17401,
+    "uid": "050928672",
+    "building": "TD1",
+    "is-employee": true,
+    "bio": "Web Builder for Q2",
+    "location": "Dalian, 21, CN",
+    "email": "zhengds@cn.ibm.com",
+    "name": "De Sheng Zheng",
+    "office-phone": "86-155-0263-7820",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "De Sheng DS Zheng/China/IBM"
+  }, {
+    "id": 81701,
+    "uid": "AVJJBB672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "zxfeidl@cn.ibm.com",
+    "name": "Xiao Fei Zhuang",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Xiao Fei XZ Zhuang/China/Contr/IBM"
+  }, {
+    "id": 290264,
+    "uid": "059947672",
+    "building": "TD1",
+    "is-employee": true,
+    "bio": "QA Specialist, Digital Sales Technology Team, IBM Digital Sale",
+    "location": "Dalian, 21, CN",
+    "email": "xiaoxuz@cn.ibm.com",
+    "name": "Xiao Xu Zou",
+    "office-phone": "86-139-98422331",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Xiao Xu Z Zou/China/IBM"
+  }, {
+    "id": 78551,
+    "uid": "222348672",
+    "building": "DL16",
+    "floor": "3",
+    "is-employee": true,
+    "bio": "Project Manager and QA, Metrics reporting and LinkedIn Administration - Sales Tools & Metrics",
+    "location": "Dalian, 21, CN",
+    "email": "cywangdl@cn.ibm.com",
+    "name": "Chun Yan Wang",
+    "office-phone": "86-134-7845-3450",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Chun Yan CC Wang/China/IBM"
+  }, {
+    "id": 484525,
+    "uid": "AVHKN1672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "dlyle@cn.ibm.com",
+    "name": "Le Yang",
+    "org-title": "IBM Global Markets, Marketing",
+    "notes-id": "Le DQ Yang/China/Contr/IBM"
+  }, {
+    "id": 121362,
+    "uid": "222117672",
+    "building": "SO4",
+    "floor": "2",
+    "is-employee": true,
+    "bio": "Application developer",
+    "location": "Dalian, 21, CN",
+    "email": "bailibl@cn.ibm.com",
+    "name": "Li Bai",
+    "office-phone": "86-158-4089- x1510",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Li DL Bai/China/IBM"
+  }, {
+    "id": 146430,
+    "uid": "051660672",
+    "building": "SO4",
+    "is-employee": true,
+    "bio": "Application Developer",
+    "location": "Dalian, 21, CN",
+    "email": "renfeid@cn.ibm.com",
+    "name": "Ren Fei Dong",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Ren Fei Dong/China/IBM"
+  }, {
+    "id": 507094,
+    "uid": "060030672",
+    "building": "SO4",
+    "is-employee": true,
+    "bio": "Web Application Developer, Fullstack Developer",
+    "location": "Dalian, 21, CN",
+    "email": "dumingy@cn.ibm.com",
+    "name": "Ming Yuan Du",
+    "office-phone": "86-159985-51479",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Ming Yuan MY Du/China/IBM"
+  }, {
+    "id": 568678,
+    "uid": "221288672",
+    "building": "SO4",
+    "is-employee": true,
+    "bio": "Application Developer/Bluemix Java Developer",
+    "location": "Dalian, 21, CN",
+    "email": "guojial@cn.ibm.com",
+    "name": "Jia Liang Guo",
+    "office-phone": "86-138-04095417",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Jia Liang Guo/China/IBM"
+  }, {
+    "id": 201675,
+    "uid": "017207672",
+    "building": "SO4",
+    "is-employee": true,
+    "bio": "I/T Specialist",
+    "location": "Dalian, 21, CN",
+    "email": "dljiarui@cn.ibm.com",
+    "name": "Rui Jia",
+    "office-phone": "86-151-640-99339",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Rui EJ Jia/China/IBM"
+  }, {
+    "id": 277051,
+    "uid": "085447672",
+    "is-employee": true,
+    "bio": "Application Developer",
+    "location": "cn",
+    "email": "jiangwqi@cn.ibm.com",
+    "name": "Wen Qi Jiang",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Wen Qi WQ Jiang/China/IBM"
+  }, {
+    "id": 440986,
+    "uid": "AVHSNL672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "dlxinlil@cn.ibm.com",
+    "name": "Xin Li",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Xin OS Li/China/Contr/IBM"
+  }, {
+    "id": 513539,
+    "uid": "AVGK3U672",
+    "building": "DL16",
+    "mobile-phone": "86-135-5594-5181",
+    "is-employee": true,
+    "bio": "QA",
+    "location": "Dalian, 21, CN",
+    "email": "limm@cn.ibm.com",
+    "name": "Meng Meng Li",
+    "office-phone": "86-135-5594-5181",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Meng Meng MM Li/China/Contr/IBM"
+  }, {
+    "uid": "222824672",
+    "building": "SO4",
+    "location": "Dalian, 21, CN",
+    "office-phone": "86-411-88151423",
+    "org-title": "IBM Digital Business Group",
+    "id": 539538,
+    "mobile-phone": "86-135-9183-0139",
+    "bio": "I/T Specialist",
+    "is-employee": true,
+    "floor": "2",
+    "email": "jjlidl@cn.ibm.com",
+    "name": "Jing Jing Li",
+    "notes-id": "Jing Jing LD Li/China/IBM"
+  }, {
+    "id": 291559,
+    "uid": "08878A672",
+    "is-employee": true,
+    "bio": "Application Developer",
+    "location": "cn",
+    "email": "liuxddl@cn.ibm.com",
+    "name": "Xu Dong Liu",
+    "office-phone": "86-00000-00000 x0000",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Xu Dong XD Liu/China/IBM"
+  }, {
+    "id": 310942,
+    "uid": "AVE4PD672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "Developer",
+    "location": "Dalian, 21, CN",
+    "email": "liuyibin@cn.ibm.com",
+    "name": "Yi Bin Liu",
+    "office-phone": "86-159-986-29930",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Yi Bin YB Liu/China/Contr/IBM"
+  }, {
+    "id": 369311,
+    "uid": "AVLCD3672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "dllinliu@cn.ibm.com",
+    "name": "Lin Liu",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Lin ZW Liu/China/Contr/IBM"
+  }, {
+    "id": 96028,
+    "uid": "AVJMDK672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "dllmyliu@cn.ibm.com",
+    "name": "Ming Yu Liu",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Ming Yu MM Liu/China/Contr/IBM"
+  }, {
+    "id": 503841,
+    "uid": "005129672",
+    "building": "SO3",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "youlv@cn.ibm.com",
+    "name": "Albee Lv",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "You Lv/China/IBM"
+  }, {
+    "id": 43776,
+    "uid": "011051672",
+    "building": "TD1",
+    "is-employee": true,
+    "bio": "ETL Developer",
+    "location": "Dalian, 21, CN",
+    "email": "quyifei@cn.ibm.com",
+    "name": "Yi Fei Qu",
+    "office-phone": "86-138-4083-1014",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Yi Fei YF Qu/China/IBM"
+  }, {
+    "id": 542722,
+    "uid": "AVJ45F672",
+    "building": "DL16",
+    "is-employee": true,
+    "bio": "Application Developer",
+    "location": "Dalian, 21, CN",
+    "email": "shisjsj@cn.ibm.com",
+    "name": "Jing Shi",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Jing VZ Shi/China/Contr/IBM"
+  }, {
+    "id": 225402,
+    "uid": "AVL34G672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "dlxs@cn.ibm.com",
+    "name": "Si Yu Xing",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Si Yu YY Xing/China/Contr/IBM"
+  }, {
+    "id": 557244,
+    "uid": "AVJ7C2672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "dlygang@cn.ibm.com",
+    "name": "Gang Yang",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Gang DG Yang/China/Contr/IBM"
+  }, {
+    "id": 311533,
+    "uid": "AVL2UR672",
+    "building": "DL16",
+    "is-employee": true,
+    "location": "Dalian, 21, CN",
+    "email": "dlpfyi@cn.ibm.com",
+    "name": "Peng Fei Yi",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Peng Fei PY Yi/China/Contr/IBM"
+  }, {
+    "id": 75983,
+    "uid": "07858A672",
+    "is-employee": true,
+    "location": "cn",
+    "email": "jmyin@cn.ibm.com",
+    "name": "Jiu Ming Yin",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Jiu Ming JM Yin/China/IBM"
+  }, {
+    "id": 264904,
+    "uid": "213839672",
+    "building": "SO4",
+    "floor": "6",
+    "is-employee": true,
+    "bio": "I/T Specialist",
+    "location": "Dalian, 21, CN",
+    "email": "yangdlyu@cn.ibm.com",
+    "name": "Yang Yu",
+    "office-phone": "86-0411-88151411 x1411",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Yang DL YY Yu/China/IBM"
+  }, {
+    "id": 59132,
+    "uid": "026754672",
+    "is-employee": true,
+    "location": "cn",
+    "email": "tqianzh@cn.ibm.com",
+    "name": "Tong Qian Zhang",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Tong Qian QZ Zhang/China/IBM"
+  }, {
+    "uid": "222092672",
+    "building": "TD1",
+    "location": "Dalian, 21, CN",
+    "office-phone": "86-138-89529219",
+    "org-title": "IBM Digital Business Group",
+    "id": 351251,
+    "mobile-phone": "86-138-89529219",
+    "bio": "Application Architect",
+    "is-employee": true,
+    "floor": "2F",
+    "email": "zhjzhang@cn.ibm.com",
+    "name": "Jun Zhang",
+    "notes-id": "Jun NN Zhang/China/IBM"
+  }, {
+    "id": 245916,
+    "uid": "035713672",
+    "building": "SO3",
+    "is-employee": true,
+    "bio": "Application Developer",
+    "location": "Dalian, 21, CN",
+    "email": "hlzhu@cn.ibm.com",
+    "name": "Hong Li Zhu",
+    "org-title": "IBM Digital Business Group",
+    "notes-id": "Hong Li HL Zhu/China/IBM"
+  }];
+
+  var App = new Vue({
+
+    el: "#app",
+
+    data: {
+      usersList: [],
+      camera: null,
+      scene: null,
+      renderer: null,
+      controls: null,
+      pointsList: [],
+      current: '',
+      group: null,
+      rotateDeg: 0.01,
+      running: false,
+      wins: [],
+      init: false,
+      count: 0,
+      levelSelected: 'levelFourthCon',
+      number: 10
+    },
+
+    mounted: function() {
+      this.initEnv();
+      this.getUsersList();
+    },
+
+    watch: {
+
+      levelSelected: function(val){
+        var map = {
+          'levelFourthCon': 10,
+          'levelOneCon': 1,
+          'levelTwoCon': 2,
+          'levelThreeCon': 3
+        };
+
+        this.number = map[val] ? map[val] : 10;
+      },
+
+      wins: function(list) {
+        var duration = 2000;
+        var group = this.group;
+        var i = 0;
+        var me = this;
+
+        function loop() {
+          var object = list[i].object;
+          var random = Math.random();
+          new TWEEN.Tween(object.position)
+            .to({
+              x: 0,
+              y: 0,
+              z: 0
+                // y: object.position.y + Math.random() * 2000 + 2000
+            }, random * duration + duration)
+            .easing(TWEEN.Easing.Exponential.InOut)
+            .onComplete(function() {
+              group.remove(object);
+              me.moveWinToWinners(list[i]);
+              if (++i < list.length) {
+                loop();
+              }
+              if (i === list.length) {
+                me.backDefaultStatus();
+              }
+            })
+            .start();
+
+          var s = new TWEEN.Tween(object.rotation)
+            .to({
+              x: 0,
+              y: 0,
+              z: 0
+            }, random * duration + duration)
+            .easing(TWEEN.Easing.Exponential.InOut)
+            .start();
+        }
+
+        loop();
+
+        // new TWEEN.Tween(window)
+        //   .to({}, duration * 2)
+        //   .onUpdate(this.render.bind(this))
+        //   .start();
+      },
+
+      running: function(val, oval) {
+        if (!val) {
+          this.count = Math.round(Math.random() * 5 + 5);
+          return;
+        }
+        this.count = 0;
+        this.startRandom();
+      },
+
+      usersList: function(val, oval) {
+        this.pointsList = val.map(function(userInfo, i) {
+          var data = JSON.parse(JSON.stringify(userInfo));
+          data.l = val.length;
+          data.i = i;
+          return new Point({
+            data: data
+          }).$mount();
+        });
+      },
+
+      pointsList: function(val) {
+        if (this.init) {
+          return;
+        }
+        var group = this.group = new THREE.Object3D();
+        this.pointsList.forEach(function(widget) {
+          group.add(widget.object);
+        }.bind(this));
+        this.scene.add(group);
+        this.resize();
+        this.animate();
+        this.startTransform();
+        this.init = true;
+      },
+
+      current: function() {
+        this.transform(5000);
+      }
+    },
+
+    methods: {
+
+      moveWinToWinners: function(widget) {
+        var wins = this.wins;
+        // wins.forEach(function(widget) {
+        $(widget.$el)
+          .removeAttr('style')
+          .removeClass('element')
+          .addClass('qcontainer')
+          .appendTo(this.$refs[this.levelSelected]);
+        // }.bind(this));
+        console.log(wins.length);
+      },
+
+      backDefaultStatus: function() {
+        this.pointsList.forEach(function(point) {
+          Vue.set(point, 'status', 1);
+        });
+        this.rotateDeg = 0.01;
+      },
+
+      onStartBtnClick: function(e) {
+        this.running = !this.running;
+      },
+
+      startTransform: function() {
+        var list = ['helix', 'sphere'];
+        var i = false;
+        this.current = list[1];
+        setInterval(function() {
+          this.current = list[Number(i)];
+          i = !i;
+        }.bind(this), 20000);
+
+        setInterval(function() {
+          this.group.rotation.y += this.rotateDeg;
+          this.render();
+        }.bind(this), 5);
+      },
+
+      movePointToLeft: function() {
+        var group = this.group;
+        var pointsList = this.pointsList;
+        var len = pointsList.length;
+        var wins = [];
+        var point;
+        while (len) {
+          --len;
+          point = pointsList[len];
+          if (point.status === 2) {
+            wins.push(point);
+            pointsList.splice(len, 1);
+          }
+        }
+        this.render();
+        this.wins = wins;
+      },
+
+      startRandom: function() {
+        var count = this.number;
+        console.log(count);
+        var _i = 0;
+        var timeout = function() {
+
+          setTimeout(function() {
+            var point;
+            var i = 0;
+            var select = function() {
+              point = this.pointsList[Math.floor(Math.random() * (this.pointsList.length + 1))];
+              if (point && point.status !== 2) {
+                Vue.set(point, 'status', 2);
+                i++;
+              } else {
+                select();
+              }
+            }.bind(this);
+            this.pointsList.forEach(function(point) {
+              Vue.set(point, 'status', 0);
+            });
+
+            while(i < count){
+              select();
+              // console.log('white', i);
+            }
+
+            if (_i <= this.count) {
+              if (this.rotateDeg < 0.05) this.rotateDeg += 0.01;
+              timeout();
+              if (this.count > 0) {
+                // if(this.rotateDeg>0.01)this.rotateDeg -= 0.02;
+                _i++;
+              }
+              return;
+            }
+
+            this.movePointToLeft();
+
+          }.bind(this), 200 + _i * 50);
+        }.bind(this);
+
+        timeout();
+      },
+
+      transform: function(duration, _t) {
+
+        var current = this.current;
+        var objects = this.pointsList;
+        var targets = _t ? _t : this.pointsList
+        var sort = [];
+
+        for (var i = 0; i < objects.length; i++) {
+
+          if (!targets[i] || objects[i].status === 2) {
+            continue;
+          }
+
+          var object = objects[i].object;
+          var target = targets[i][current];
+          sort.push(targets[i]);
+
+          new TWEEN.Tween(object.position)
+            .to({
+              x: target.position.x,
+              y: target.position.y,
+              z: target.position.z
+            }, Math.random() * duration + duration)
+            .easing(TWEEN.Easing.Exponential.InOut)
+            .start();
+
+          new TWEEN.Tween(object.rotation)
+            .to({
+              x: target.rotation.x,
+              y: target.rotation.y,
+              z: target.rotation.z
+            }, Math.random() * duration + duration)
+            .easing(TWEEN.Easing.Exponential.InOut)
+            .start();
+
+        }
+
+        // new TWEEN.Tween(window)
+        //   .to({}, duration * 2)
+        //   .onUpdate(this.render.bind(this))
+        //   .start();
+
+        !_t && setTimeout(function() {
+          this.transform(5000, sort.sort(function() {
+            return 0.5 - Math.random();
+          }));
+        }.bind(this), 10000);
+      },
+
+      resize: function() {
+        var rect = this.$refs.container.getBoundingClientRect();
+        this.camera.aspect = rect.width / rect.height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(rect.width, rect.height);
+        this.render();
+      },
+
+      animate: function() {
+        requestAnimationFrame(this.animate.bind(this));
+        TWEEN.update();
+        this.controls.update();
+      },
+
+      initEnv: function() {
+        var rect = this.$refs.container.getBoundingClientRect();
+        var camera = this.camera = new THREE.PerspectiveCamera(40, rect.width / rect.height, 1, 10000);
+        camera.position.z = 0;
+        var scene = this.scene = new THREE.Scene();
+        var renderer = this.renderer = new THREE.CSS3DRenderer();
+        renderer.setSize(rect.width, rect.height);
+        renderer.domElement.style.position = 'absolute';
+        this.$refs.container.appendChild(renderer.domElement);
+        var controls = this.controls = new THREE.DeviceOrientationControls(camera);
+        // control = new THREE.FirstPersonControls(camera, canvas);
+        controls.movementSpeed = 100;
+        controls.lookSpeed = 0.125;
+        controls.lookVertical = true;
+        // var controls = this.controls = new THREE.TrackballControls(camera, renderer.domElement);
+        // controls.rotateSpeed = 0;
+        controls.minDistance = 500;
+        controls.maxDistance = 500;
+        // controls.addEventListener('change', this.render.bind(this));
+        window.addEventListener('resize', this.resize.bind(this));
+      },
+
+      render: function() {
+        this.renderer.render(this.scene, this.camera);
+      },
+
+      getUsersList: function() {
+        // $.getJSON('userslist.json', function(data) {
+        this.usersList = usersList;
+        // }.bind(this));
+      },
+    }
+  });
+
+  var Point = Vue.component('Point', {
+
+    template: '#point',
+
+    data: function() {
+      return {
+        object: null,
+        sphere: null,
+        helix: null,
+        status: 1,
+        i: 0,
+        l: 0
+      };
+    },
+
+    mounted: function() {
+      this.initPhoto();
+      this.initObject();
+      this.initHelix();
+      this.initSphere();
+    },
+
+    watch: {
+      status: function(val, oval) {
+        var cssList = [0.2, 0.5, 1];
+        this.$el.style.opacity = cssList[val];
+      },
+    },
+
+    methods: {
+
+      onRemoveBtnClick: function() {
+        this.$destroy();
+        this.$el.remove();
+      },
+
+      initPhoto: function() {
+        this.$refs.img.src = 'photos/' + this.uid + '.jpg';
+      },
+
+      initObject: function() {
+        var object = this.object = new THREE.CSS3DObject(this.$el);
+        object.position.x = Math.random() * 4000 - 2000;
+        object.position.y = Math.random() * 4000 - 2000;
+        object.position.z = Math.random() * 4000 - 2000;
+      },
+
+      initHelix: function() {
+        var vector = new THREE.Vector3();
+        var i = this.i;
+        var phi = i * 0.175 + Math.PI;
+        var object = this.helix = new THREE.Object3D();
+        object.position.x = 900 * Math.sin(phi);
+        object.position.y = -(i * 8) + 450;
+        object.position.z = 900 * Math.cos(phi);
+        vector.x = object.position.x * 2;
+        vector.y = object.position.y;
+        vector.z = object.position.z * 2;
+        object.lookAt(vector);
+      },
+
+      initSphere: function() {
+        var vector = new THREE.Vector3();
+        var i = this.i;
+        var l = this.l;
+        var phi = Math.acos(-1 + (2 * i) / l);
+        var theta = Math.sqrt(l * Math.PI) * phi;
+        var object = this.sphere = new THREE.Object3D();
+        object.position.x = 800 * Math.cos(theta) * Math.sin(phi);
+        object.position.y = 800 * Math.sin(theta) * Math.sin(phi);
+        object.position.z = 800 * Math.cos(phi);
+        vector.copy(object.position).multiplyScalar(2);
+        object.lookAt(vector);
+      }
+    }
+  });
+  </script>
+</body>
+
+</html>
