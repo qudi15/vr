@@ -66,7 +66,8 @@
         camera = undefined,
         particleSystem = undefined,
         stat = undefined,
-        control = undefined;
+        control = undefined,
+        effect = undefined;
 
       var Sun = undefined,
         Mercury = undefined,
@@ -119,6 +120,9 @@
           renderer.shadowMap.enabled = true; //辅助线
           renderer.shadowMapSoft = true; //柔和阴影
           renderer.setClearColor(0xffffff, 0);
+
+          /*effect*/
+          effect = new THREE.StereoEffect(renderer);
 
           /*scene*/
           scene = new THREE.Scene();
@@ -455,7 +459,10 @@
             displayName && displayName.visible && (displayName.visible = false);
           }
 
+          effect.setSize(window.innerWidth, window.innerHeight);
+
           renderer.render(scene, camera);
+          effect.render(scene, camera);
           requestAnimationFrame(function () {
             return _this2.move();
           });

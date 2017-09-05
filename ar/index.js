@@ -461,22 +461,22 @@ var musicIcon = document.getElementById("music");
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
     var exArray = [];
     if (navigator.getUserMedia) {
-      // MediaStreamTrack.getSources(function(sourceInfos) {
-      //   for (var i = 0; i != sourceInfos.length; ++i) {
-      //     var sourceInfo = sourceInfos[i];
-      //     if (sourceInfo.kind === "video") {
-      //       exArray.push(sourceInfo.id)
-      //     }
-      //   }
+      MediaStreamTrack.getSources(function(sourceInfos) {
+        for (var i = 0; i != sourceInfos.length; ++i) {
+          var sourceInfo = sourceInfos[i];
+          if (sourceInfo.kind === "video") {
+            exArray.push(sourceInfo.id)
+          }
+        }
         navigator.getUserMedia({
           "video": {
-            // "optional": [{
-            //   // "sourceId": exArray[0]
-            // }]
+            "optional": [{
+              "sourceId": exArray[1]
+            }]
           },
           "audio": false
         }, successFunc, errorFunc)
-      // })
+      })
     } else {
       need_3droom = true;
     }
