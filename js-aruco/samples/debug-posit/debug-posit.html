@@ -36,17 +36,17 @@
     
     function init(){
       var exArray = [];
-      // MediaStreamTrack.getSources(function(sourceInfos) {
-      //   for (var i = 0; i != sourceInfos.length; ++i) {
-      //     var sourceInfo = sourceInfos[i];
-      //     if (sourceInfo.kind === "video") {
-      //       exArray.push(sourceInfo.id)
-      //     }
-      //   }
+      MediaStreamTrack.getSources(function(sourceInfos) {
+        for (var i = 0; i != sourceInfos.length; ++i) {
+          var sourceInfo = sourceInfos[i];
+          if (sourceInfo.kind === "video") {
+            exArray.push(sourceInfo.id)
+          }
+        }
         navigator.getUserMedia({"video": {
-            // "optional": [{
-            //   "sourceId": exArray[0]
-            // }]
+            "optional": [{
+              "sourceId": exArray[1]
+            }]
           },}, 
           function (stream){
             if (window.webkitURL) {
@@ -60,8 +60,7 @@
           function(error){
           }
         );
-      // });
-
+      });
       
       detector = new AR.Detector();
       posit = new POS.Posit(modelSize, canvas.width);
